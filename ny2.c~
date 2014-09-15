@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-// TTTTEEEEESSSSTTT Gdehjgkleanhklfdnkablnhfieowhgfklwengklnedklgnreklawgkrlebnö
+
 typedef struct node{
   char *key;
   char *value;
@@ -35,8 +35,7 @@ void printWelcome(void){
   puts("");
 }
 
-Node makeDB(char *buffer, FILE *database, Node list){
-  Node newNode = malloc(sizeof(struct node));
+void makeDB(char *buffer, FILE *database, Node newNode, Node list){
   readline(buffer, 128, database);
   newNode->key = malloc(strlen(buffer) + 1);
   strcpy(newNode->key, buffer);
@@ -44,10 +43,9 @@ Node makeDB(char *buffer, FILE *database, Node list){
   newNode->value = malloc(strlen(buffer) + 1);
   strcpy(newNode->value, buffer);
   newNode->next = list; 
-  return newNode;
 }
 
-void makeChoice(int choice){
+void mainChoice(int choice){
     puts("Please choose an operation");
     puts("1. Query a key");
     puts("2. Update an entry");
@@ -82,75 +80,17 @@ Node findKey(Node cursor, char *buffer){
 }
 
 Node updateValue(char *buffer, Node cursor){
-  if(cursor != NULL){
-    printf("Enter new value: ");
-    readline(buffer, 128, stdin);
-    free(cursor->value);
-    cursor->value = malloc(strlen(buffer) + 1);
-    strcpy(cursor->value, buffer);
-    puts("Value inserted successfully!");
-    return cursor;
-  }
- else{
-   printf("Could not find an entry matching key \"%s\"!\n", buffer);
-   return cursor;
- }
+  printf("Enter new value: ");
+  readline(buffer, 128, stdin);
+  free(cursor->value);
+  cursor->value = malloc(strlen(buffer) + 1);
+  strcpy(cursor->value, buffer);
+  puts("Value inserted successfully!");
+  return cursor;
 }
-
-Node insertEntry(char *buffer, Node list, Node cursor){
-  if(cursor == NULL){
-    puts("Key is unique!\n");
-    Node newNode = malloc(sizeof(struct node));	
-    newNode->key = malloc(strlen(buffer) + 1);
-    strcpy(newNode->key, buffer);
-    printf("Enter value: ");
-    readline(buffer, 128, stdin);
-    newNode->value = malloc(strlen(buffer) + 1);
-    strcpy(newNode->value, buffer);
-    newNode->next = list;
-    list = newNode;    
-    puts("");
-    puts("Entry inserted successfully:");
-    printf("key: %s\nvalue: %s\n", list->key, list->value);
-    return list;
-  }
-  return list;
-}
-
-Node deleteEntry(Node cursor, char *buffer){
-  Node prev = NULL;
-  while(cursor != NULL){
-    if(strcmp(buffer, cursor->key) == 0){
-      if(prev == NULL){ // Delete first node
-	cursor = cursor->next;
-	printf("Deleted the following entry:\nkey: %s\nvalue: %s\n", cursor->key, cursor->value);
-      	return cursor;
-      }
-      else{
-	prev->next = cursor->next;
-	printf("Deleted the following entry:\nkey: %s\nvalue: %s\n", cursor->key, cursor->value);   
-     	return prev;
-      }
-    }
-    else{
-      prev = cursor;
-      cursor = cursor->next;
-    }
-  }
-  printf("Could not find an entry matching key \"%s\"!\n", buffer);
-  return prev;
-}    
-
-void printDB(Node cursor){
-  while(cursor != NULL){
-    puts(cursor->key);
-    puts(cursor->value);
-    cursor = cursor->next;
-  }
-}  
 
 int main(int argc, char *argv[]){
-  checkArguments(argc); //går ej ur main om den returnerar -1
+  checkArguments(argc);
   printWelcome();
   // Read the input file
   char *filename = argv[1];
@@ -159,15 +99,19 @@ int main(int argc, char *argv[]){
   char buffer[128];
   Node list = NULL;
   while(!(feof(database))){
-    list = makeDB(buffer, database, list);
-  }    // Main loop
+    Node newNode = malloc(sizeof(struct node));
+    makeDB(buffer, database, newNode, list);
+    list = newNode;
+  }
+  // Main loop
   int choice = -1;
   while(choice != 0) {
-    makeChoice(choice);
+    mainChoice(choice);
     scanf("%d", &choice);
     while(getchar() != '\n'); // Clear stdin
     Node cursor;
     switch(choice){
+
     case 1:
       // Query
       readInput("Searching database...", buffer);
@@ -176,36 +120,85 @@ int main(int argc, char *argv[]){
 	printf("Could not find an entry matching key \"%s\"!\n", buffer);
       }
       break;
+
     case 2:
       // Update
       readInput("Searching database...", buffer); 
       cursor = findKey(list, buffer);
-      updateValue(buffer, cursor);
-      break;   
+      if(cursor != NULL){
+	updateValue(buffer, cursor);
+      }
+      else{
+	printf("Could not find an entry matching key \"%s\"!\n", buffer);
+      }
+       break;
+
     case 3:
       // Insert
       readInput("Searching database for duplicate keys...", buffer);
-      cursor = findKey(list, buffer);
-      list = insertEntry(buffer, list, cursor);      // Insert new node to the front of the list
-      break;	      
+      cursor = list;
+      findKey(cursor, buffer;
+      if(!found){ // Insert new node to the front of the list
+        puts("Key is unique!\n");
+        Node newNode = malloc(sizeof(struct node));
+        newNode->key = malloc(strlen(buffer) + 1);
+        strcpy(newNode->key, buffer);
+        printf("Enter value: ");
+        readline(buffer, 128, stdin);
+        newNode->value = malloc(strlen(buffer) + 1);
+        strcpy(newNode->value, buffer);
+        newNode->next = list;
+        list = newNode;
+        puts("");
+        puts("Entry inserted successfully:");
+        printf("key: %s\nvalue: %s\n", list->key, list->value);
+      }
+      break;
+
     case 4:
       // Delete
       readInput("Searching database...", buffer);
-      cursor = deleteEntry(list, buffer);
-      break;     
+      found = 0;
+      cursor = list;
+      Node prev = NULL;
+      while(!found && cursor != NULL){
+        if(strcmp(buffer, cursor->key) == 0){
+          if(prev == NULL){ // Delete first node
+            list = cursor->next;
+          }else{
+            prev->next = cursor->next;
+          }
+          found = 1;
+          printf("Deleted the following entry:\nkey: %s\nvalue: %s\n", cursor->key, cursor->value);
+        }else{
+          prev = cursor;
+          cursor = cursor->next;
+        }
+      }
+      if(!found){
+        printf("Could not find an entry matching key \"%s\"!\n", buffer);
+      }
+      break;
+
     case 5:
       // Print database
-      printDB(list);
+      cursor = list;
+      while(cursor != NULL){
+        puts(cursor->key);
+        puts(cursor->value);
+        cursor = cursor->next;
+      }
       break;
+
     case 0:
       // Exit
       puts("Good bye!");
       break;
     default:
       // Please try again
-      puts("Could not parse choice! Please try again"); 
+      puts("Could not parse choice! Please try again");
     }
-    puts(""); 
+    puts("");
     } 
   return 0;
 }
