@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-//test hdusahfuondakfnpidanfcpdanvpdnaop
+//heeeej
 typedef struct node{
   char *key;
   char *value;
@@ -117,12 +117,13 @@ Node insertEntry(char *buffer, Node list, Node cursor){
   return list;
 }
 
-Node deleteEntry(Node cursor, char *buffer){
+Node deleteEntry(char *buffer, Node *list){
   Node prev = NULL;
+  Node cursor = *list;
   while(cursor != NULL){
     if(strcmp(buffer, cursor->key) == 0){
       if(prev == NULL){ // Delete first node
-	cursor = cursor->next;
+	*list = cursor->next;
 	printf("Deleted the following entry:\nkey: %s\nvalue: %s\n", cursor->key, cursor->value);
       	return cursor;
       }
@@ -134,7 +135,7 @@ Node deleteEntry(Node cursor, char *buffer){
     }
     else{
       prev = cursor;
-      cursor = cursor->next;
+      cursor  = cursor->next;
     }
   }
   printf("Could not find an entry matching key \"%s\"!\n", buffer);
@@ -191,7 +192,7 @@ int main(int argc, char *argv[]){
     case 4:
       // Delete
       readInput("Searching database...", buffer);
-      cursor = deleteEntry(list, buffer);
+      cursor = deleteEntry(buffer, &list);
       break;     
     case 5:
       // Print database
