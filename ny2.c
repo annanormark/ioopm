@@ -142,7 +142,7 @@ void printDB(Node cursor){
     cursor = nextEntry(cursor);
   }
 }  
-/*
+
 int main(int argc, char *argv[]){
   checkArguments(argc); //går ej ur main om den returnerar -1
   printWelcome();
