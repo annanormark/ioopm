@@ -1,12 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-//heeeej
-typedef struct node{
-  char *key;
-  char *value;
-  struct node *next;
-} *Node;
+#include "testmodul.h"
 
 void readline(char *dest, int n, FILE *source){
   fgets(dest, n, source);
@@ -36,14 +31,12 @@ void printWelcome(void){
 }
 
 Node makeDB(char *buffer, FILE *database, Node list){
-  Node newNode = malloc(sizeof(struct node));
+  Node newNode = emptyNode();
   readline(buffer, 128, database);
-  newNode->key = malloc(strlen(buffer) + 1);
-  strcpy(newNode->key, buffer);
+  newNode = setKey(buffer, newNode);
   readline(buffer, 128, database);
-  newNode->value = malloc(strlen(buffer) + 1);
-  strcpy(newNode->value, buffer);
-  newNode->next = list; 
+  newNode = setValue(buffer, newNode);
+  newNode = setNextEntry(newNode, list);
   return newNode;
 }
 
@@ -66,16 +59,16 @@ void readInput(const char *n,char *buffer){
 
 void printEntry(const char *n, Node cursor){
   puts(n);
-  printf("key: %s\nvalue: %s\n", cursor->key, cursor->value);
+  printf("key: %s\nvalue: %s\n", listKey(cursor), listValue(cursor));
 }
 
 Node findKey(Node cursor, char *buffer){
   while(cursor != NULL){
-    if(strcmp(buffer, cursor->key) == 0){
+    if(strcmp(buffer, listKey(cursor)) == 0){
       printEntry("found entry:", cursor);
       return cursor;
     }else{
-      cursor = cursor->next;
+      cursor = nextEntry(cursor);
     }
   }
   return NULL;
@@ -85,9 +78,8 @@ Node updateValue(char *buffer, Node cursor){
   if(cursor != NULL){
     printf("Enter new value: ");
     readline(buffer, 128, stdin);
-    free(cursor->value);
-    cursor->value = malloc(strlen(buffer) + 1);
-    strcpy(cursor->value, buffer);
+    free(listValue(cursor));
+    cursor = setValue(buffer, cursor);
     puts("Value inserted successfully!");
     return cursor;
   }
@@ -100,42 +92,43 @@ Node updateValue(char *buffer, Node cursor){
 Node insertEntry(char *buffer, Node list, Node cursor){
   if(cursor == NULL){
     puts("Key is unique!\n");
-    Node newNode = malloc(sizeof(struct node));	
-    newNode->key = malloc(strlen(buffer) + 1);
-    strcpy(newNode->key, buffer);
+    Node newNode = emptyNode();	
+    newNode = setKey(buffer, newNode);
     printf("Enter value: ");
     readline(buffer, 128, stdin);
-    newNode->value = malloc(strlen(buffer) + 1);
-    strcpy(newNode->value, buffer);
-    newNode->next = list;
+    newNode = setValue(buffer, newNode);
+    newNode = setNextEntry(newNode, list);
     list = newNode;    
     puts("");
     puts("Entry inserted successfully:");
-    printf("key: %s\nvalue: %s\n", list->key, list->value);
+    printf("key: %s\nvalue: %s\n", listKey(list), listValue(list));
     return list;
   }
   return list;
 }
 
+
 Node deleteEntry(char *buffer, Node *list){
-  Node prev = NULL;
+  Node prev = emptyNode();
   Node cursor = *list;
   while(cursor != NULL){
-    if(strcmp(buffer, cursor->key) == 0){
+    if(strcmp(buffer, listKey(cursor)) == 0){
       if(prev == NULL){ // Delete first node
-	*list = cursor->next;
-	printf("Deleted the following entry:\nkey: %s\nvalue: %s\n", cursor->key, cursor->value);
+	*list = nextEntry(cursor);
+	printf("Deleted the following entry:\nkey: %s\nvalue: %s\n", listKey(cursor), listValue(cursor));
       	return cursor;
       }
       else{
-	prev->next = cursor->next;
-	printf("Deleted the following entry:\nkey: %s\nvalue: %s\n", cursor->key, cursor->value);   
+	cursor = nextEntry(cursor);
+	prev = setNextEntry(prev, cursor);
+	//prev->next = cursor->next;
+	printf("Deleted the following entry:\nkey: %s\nvalue: %s\n", listKey(cursor), listValue(cursor));   
      	return prev;
       }
     }
     else{
       prev = cursor;
-      cursor  = cursor->next;
+      cursor  = nextEntry(cursor);
     }
   }
   printf("Could not find an entry matching key \"%s\"!\n", buffer);
@@ -144,12 +137,12 @@ Node deleteEntry(char *buffer, Node *list){
 
 void printDB(Node cursor){
   while(cursor != NULL){
-    puts(cursor->key);
-    puts(cursor->value);
-    cursor = cursor->next;
+    puts(listKey(cursor));
+    puts(listValue(cursor));
+    cursor = nextEntry(cursor);
   }
 }  
-
+/*
 int main(int argc, char *argv[]){
   checkArguments(argc); //går ej ur main om den returnerar -1
   printWelcome();
@@ -210,4 +203,4 @@ int main(int argc, char *argv[]){
     } 
   return 0;
 }
-  
+
