@@ -1,6 +1,7 @@
 #include <stdio.h>
-#include "testmodul.h"
+
 #include "dbfunctions.h"
+#include "listfunctions.h"
 
 int main(int argc, char *argv[]){
   checkArguments(argc); //går ej ur main om den returnerar -1
@@ -10,7 +11,7 @@ int main(int argc, char *argv[]){
   printf("Loading database \"%s\"...\n\n", filename);
   FILE *database = fopen(filename, "r");
   char buffer[128];
-  Node list = NULL;
+
   while(!(feof(database))){
     list = makeDB(buffer, database, list);
   }    // Main loop
@@ -19,7 +20,6 @@ int main(int argc, char *argv[]){
     makeChoice(choice);
     scanf("%d", &choice);
     while(getchar() != '\n'); // Clear stdin
-    Node cursor;
     switch(choice){
     case 1:
       // Query

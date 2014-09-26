@@ -1,11 +1,15 @@
 #include <stdlib.h>
 #include <string.h>
+#include <stdio.h>
 
 typedef struct node{
   char *key;
   char *value;
   struct node *next;
 } *Node;
+
+Node cursor;
+Node list = NULL;
 
 void printEntry(const char *n, Node cursor){
   puts(n);

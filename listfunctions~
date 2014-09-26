@@ -1,24 +1,16 @@
-#include <stdlib.h>
-#include <string.h>
-
-typedef struct node{
-  char *key;
-  char *value;
-  struct node *next;
-} *Node;
 
 void printEntry(const char *n, Node cursor){
   puts(n);
-  printf("ke: %s\nvalue: %s\n", cursor->key;, cursor->value);
+  printf("key: %s\nvalue: %s\n", listKey(cursor), listValue(cursor));
 }
 
 Node findKey(Node cursor, char *buffer){
   while(cursor != NULL){
-    if(strcmp(buffer, cursor->key;) == 0){
+    if(strcmp(buffer, listKey(cursor)) == 0){
       printEntry("found entry:", cursor);
       return cursor;
     }else{
-      cursor = cursor->next;
+      cursor = nextEntry(cursor);
     }
   }
   return NULL;
@@ -28,9 +20,8 @@ Node updateValue(char *buffer, Node cursor){
   if(cursor != NULL){
     printf("Enter new value: ");
     readline(buffer, 128, stdin);
-    free(cursor->value);
-    list->cursor = malloc(strlen(buffer) + 1);
-    strcpy(cursor->value, buffer);
+    free(listValue(cursor));
+    cursor = setValue(buffer, cursor);
     puts("Value inserted successfully!");
     return cursor;
   }
@@ -43,18 +34,16 @@ Node updateValue(char *buffer, Node cursor){
 Node insertEntry(char *buffer, Node list, Node cursor){
   if(cursor == NULL){
     puts("Key is unique!\n");
-    Node newNode = malloc(sizeof(struct node));	
-    newNode->key = malloc(strlen(buffer) + 1);
-    strcpy(newNode->key, buffer);
+    Node newNode = emptyNode();	
+    newNode = setKey(buffer, newNode);
     printf("Enter value: ");
     readline(buffer, 128, stdin);
-    newNode->value = malloc(strlen(buffer) + 1);
-    strcpy(newNode->value, buffer);
-    newNode->head = list;
+    newNode = setValue(buffer, newNode);
+    newNode = setNextEntry(newNode, list);
     list = newNode;    
     puts("");
     puts("Entry inserted successfully:");
-    printf("key: %s\nvalue: %s\n", list->key, list->value);
+    printf("key: %s\nvalue: %s\n", listKey(list), listValue(list));
     return list;
   }
   return list;
@@ -65,22 +54,22 @@ Node deleteEntry(char *buffer, Node *list){
   Node prev = NULL;
   Node cursor = *list;
   while(cursor != NULL){
-    if(strcmp(buffer, cursor->key;) == 0){
+    if(strcmp(buffer, listKey(cursor)) == 0){
       if(prev == NULL){ // Delete first node
-	printf("Deleted the following entry:\nkey: %s\nvalue: %s\n", cursor->key;, cursor->value);
-	*list = cursor->next;
+	printf("Deleted the following entry:\nkey: %s\nvalue: %s\n", listKey(cursor), listValue(cursor));
+	*list = nextEntry(cursor);
 	return *list;
       }
       else{
-	printf("Deleted the following entry:\nkey: %s\nvalue: %s\n", cursor->key;, cursor->value);  	
-	cursor = cursor->next;
-	prev = cursor->next;
+	printf("Deleted the following entry:\nkey: %s\nvalue: %s\n", listKey(cursor), listValue(cursor));  	
+	cursor = nextEntry(cursor);
+	prev = setNextEntry(prev, cursor);
      	return prev; 
       }
     }
     else{
       prev = cursor;
-      cursor  = cursor->next;
+      cursor  = nextEntry(cursor);
       
     }
   }
@@ -90,8 +79,8 @@ Node deleteEntry(char *buffer, Node *list){
 
 void printDB(Node cursor){
   while(cursor != NULL){
-    puts(cursor->key;);
-    puts(cursor->value);
-    cursor = cursor->next;
+    puts(listKey(cursor));
+    puts(listValue(cursor));
+    cursor = nextEntry(cursor);
   }
 }
