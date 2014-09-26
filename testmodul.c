@@ -1,5 +1,5 @@
 #include <stdlib.h>
-
+#include <string.h>
 
 typedef struct node{
   char *key;
@@ -37,7 +37,7 @@ char *listValue(Node list){
 }
  
 Node nextEntry(Node list){
-  return list->next;
+   return list->next;
 }
 
 
