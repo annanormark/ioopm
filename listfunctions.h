@@ -1,8 +1,8 @@
 typedef struct node *Node;
 
-Node cursor;
+extern Node cursor;
 
-Node list = NULL;
+extern Node list;
 
 void readline(char *dest, int n, FILE *source);
 

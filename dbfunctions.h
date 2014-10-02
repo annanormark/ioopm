@@ -1,5 +1,3 @@
-int checkArguments(int argc);
-
 void readInput(const char *n, char *buffer);
 
 void printWelcome(void);

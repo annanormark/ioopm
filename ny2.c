@@ -3,7 +3,7 @@
 //#include "listfunctions.h"
 
 int main(int argc, char *argv[]){
-  If (argc < 2){
+  if (argc < 2){
     puts("Usage: db [FILE]");
     return -1;
   }
