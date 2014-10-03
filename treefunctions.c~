@@ -1,0 +1,17 @@
+
+
+typedef struct node{
+  char key_value;
+  struct node *left;
+  struct node *right;
+} *Tree;
+
+Tree cursor;
+Tree list = NULL;
+
+void readline(char *dest, int n, FILE *source){
+  fgets(dest, n, source);
+  int len = strlen(dest);
+  if(dest[len-1] == '\n')
+    dest[len-1] = '\0';
+}

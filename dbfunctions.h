@@ -4,4 +4,4 @@ void printWelcome(void);
 
 void makeChoice(int choice);
 
-void mainloop(char *buffer, FILE *database);
+
