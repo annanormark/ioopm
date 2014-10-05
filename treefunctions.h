@@ -5,6 +5,8 @@ extern Tree list;
 
 void readline(char *dest, int n, FILE *source);
 
+Tree makeTree(char keybuf, char valuebuf, Tree newNode);
+
 Tree makeDB(char *buffer, FILE *database, Tree list);
 
 void printEntry(const char *n, Tree cursor);

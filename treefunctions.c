@@ -19,23 +19,33 @@ void readline(char *dest, int n, FILE *source){
     dest[len-1] = '\0';
 }
 
-Tree makeDB(char *buffer, FILE *database, Tree list){
-  Tree newNode = malloc(sizeof(struct node));
-  if(list == NULL) {
-    readline(buffer, 128, database);
-    newNode->key = malloc(strlen(buffer) + 1);
-    strcpy(newNode->key, buffer);
-    readline(buffer, 128, database);
-    newNode->value = malloc(strlen(buffer) + 1);
-    strcpy(newNode->value, buffer);
+Tree makeTree(char *keybuf, char *valuebuf, Tree newNode){
+  if(newNode == NULL){ 
+    Tree newNode = malloc(sizeof(struct node));  
+    newNode->key = malloc(strlen(keybuf) + 1);
+    strcpy(newNode->key, keybuf);
+    newNode->value = malloc(strlen(valuebuf) + 1);
+    strcpy(newNode->value, valuebuf);
+    newNode->bigger = NULL;
+    newNode->smaller = NULL;
     return newNode;
   }
-  else if(list->key < buffer){
-    list->smaller = makeDB(buffer, database, list->smaller);
+  else if (strcmp(keybuf, newNode->key) > 0){
+    newNode->smaller = makeTree(keybuf, valuebuf, newNode->smaller);
+  } 
+  else {
+    newNode->bigger = makeTree(keybuf, valuebuf, newNode->bigger);
   }
-  else{
-    list->bigger = makeDB(buffer,database, list->bigger);
-  }
+  return newNode;
+
+}
+
+Tree makeDB(char *buffer, FILE *database, Tree list){
+  char keybuf[128];
+  char valuebuf[128];
+  readline(keybuf, 128, database);
+  readline(valuebuf, 128, database);
+  list = makeTree(keybuf, valuebuf, list);
   return list;
 }
 

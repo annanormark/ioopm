@@ -17,7 +17,7 @@ int main(int argc, char *argv[]){
   while(!(feof(database))){
     list = makeDB(buffer, database, list);
     int choice = -1;
-    while(choice != 0) {
+    While(choice != 0) {
       makeChoice(choice);
       scanf("%d", &choice);
       while(getchar() != '\n'); // Clear stdin
