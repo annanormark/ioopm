@@ -3,22 +3,23 @@ typedef struct node *Tree;
 extern Tree cursor;
 extern Tree list;
 
-void readline(char *dest, int n, FILE *source);
+//makes a database into a tree structure
+Tree makeDB(FILE *database, Tree tree);
 
-Tree makeTree(char keybuf, char valuebuf, Tree newNode);
+//prints the string and the first key and value from tree 
+void printEntry(const char *string, Tree tree);
 
-Tree makeDB(FILE *database, Tree list);
+//searches the tree for the key and prints the key and the value
+Tree findKey(Tree tree, char *key);
 
-void printEntry(const char *n, Tree cursor);
+//searches the tree for the key and let you update the value linked to the key
+Tree updateValue(char *key, Tree tree);
 
-Tree findKey(Tree cursor, char *buffer);
+//searches the tree for a key, if the key does not exist, the function prompts you to input a value and it creates a new entry in the tree with the key and value
+Tree insertEntry(char *key, Tree tree, FILE *database);
 
-Tree updateValue(char *buffer, Tree cursor);
+// deletes the entry with key, from tree if it exists
+Tree deleteEntry(char *key, Tree *tree);
 
-Tree insertEntry(char *buffer, Tree list, Tree cursor, FILE *database);
-
-Tree minValue(Tree cursor);
-
-Tree deleteEntry(char *buffer, Tree *list);
-
-void printDB(Tree cursor);
+//prints the entrys in tree
+void printDB(Tree tree);

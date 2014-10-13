@@ -119,9 +119,13 @@ Tree insertEntry(char *buffer, Tree list, FILE *database){
 }
 
 Tree minValue(Tree cursor){
+  Tree temp = NULL;
     while(cursor->left != NULL){
+      temp = cursor;
       cursor = cursor->left;
     }  
+    if(temp != NULL)
+      temp->left = cursor->right;
   return cursor;
 }
 
@@ -132,24 +136,56 @@ Tree delete(char *buffer, Tree cursor){
       if(cursor->right == NULL){
 	if(cursor->left == NULL){
 	  cursor = NULL;
-	  return cursor;
+	  free(cursor);
+	  return NULL;
 	}
 	else{
-	  strcpy(cursor->key, cursor->left->key);
-	  strcpy(cursor->value, cursor->left->value);
-	  cursor = delete(cursor->key, cursor->left);
+	  if(cursor->left->left == NULL) {
+	    strcpy(cursor->key, cursor->left->key);
+	    strcpy(cursor->value, cursor->left->value);
+	    cursor->left = NULL;
+	    free(cursor->left);
+	    return cursor;
+	  }		
+	  else{	   
+	    temp = minValue(cursor->left);
+	    
+	      
+	      }
 	}
       }
       else if(cursor->left == NULL){
-	strcpy(cursor->key, cursor->right->key);
-	strcpy(cursor->value, cursor->right->value);
-	cursor = delete(cursor->key, cursor->right);
+	if(cursor->right->left == NULL){
+	  temp = cursor->right;
+	  strcpy(cursor->key, temp->key);
+	  strcpy(cursor->value, temp->value);	  
+	  cursor->right = temp->right;
+	  free(temp);
+	  return cursor;
+	}
+	else{
+	  temp = minValue(cursor->right);
+	  strcpy(cursor->key, temp->key);
+	  strcpy(cursor->value, temp->value);
+	  free(temp);
+	  return cursor;
+	}
       }
       else{
-	temp = minValue(cursor->right);
-	strcpy(cursor->key, temp->key);
-	strcpy(cursor->value, temp->value);
-	cursor = delete(temp->key, cursor->right);
+	if(cursor->right->left != NULL){
+	  temp = minValue(cursor->right);
+	  strcpy(cursor->key, temp->key);
+	  strcpy(cursor->value, temp->value);
+	  free(temp);
+	  return cursor;
+	}
+	else{
+	  temp = cursor->right;
+	  strcpy(cursor->key, temp->key);
+	  strcpy(cursor->value, temp->value);	  
+	  cursor->right = temp->right;
+	  free(temp);
+	  return cursor;
       }
     }
     else if(strcmp(buffer, cursor->key) <= 0)
