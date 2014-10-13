@@ -40,7 +40,7 @@ int main(int argc, char *argv[]){
     case 3:
       // Insert
       readInput("Searching database for duplicate keys...", buffer);
-      list = insertEntry(buffer, list, cursor, database);      // Insert new node to the front of the list
+      list = insertEntry(buffer, list, database);      // Insert new node to the front of the list
       break;	      
     case 4:
       // Delete
