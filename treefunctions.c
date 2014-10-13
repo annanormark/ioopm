@@ -21,6 +21,7 @@ void readline(char *dest, int n, FILE *source){
 
 Tree makeTree(char *keybuf, char *valuebuf, Tree newNode){
   if(newNode == NULL){ 
+    // if the pointer is empty it makes a new entry
     Tree newNode = malloc(sizeof(struct node));  
     newNode->key = malloc(strlen(keybuf) + 1);
     strcpy(newNode->key, keybuf);
@@ -31,9 +32,11 @@ Tree makeTree(char *keybuf, char *valuebuf, Tree newNode){
     return newNode;
   }
   else if (strcmp(keybuf, newNode->key) > 0){
+    //if the key is smaller than the key you want to insert
     newNode->right = makeTree(keybuf, valuebuf, newNode->right);
   } 
   else {
+    //if the key is bigger than the key you wnat to insert
     newNode->left = makeTree(keybuf, valuebuf, newNode->left);
   }
   return newNode;
@@ -41,6 +44,7 @@ Tree makeTree(char *keybuf, char *valuebuf, Tree newNode){
 }
 
 Tree makeDB(FILE *database, Tree list){
+  //makes a database in tree-form
   char keybuf[128];
   char valuebuf[128];
   readline(keybuf, 128, database);
@@ -56,13 +60,15 @@ void printEntry(const char *n, Tree cursor){
 
 Tree findKey(Tree cursor, char *buffer){
   while(!(cursor == NULL)){
+    //it searshes as long as it hasn't reached the end of the tree
     if(strcmp(buffer, cursor->key) == 0){
       printEntry("found entry:", cursor);
       return cursor;
       break;
     }
-    else{
-      if(cursor->value < buffer) {
+    else{ 
+      //compares if the key we're searching for is bigger or smaller than the existing key
+      if(strcmp(cursor->key, buffer) < 0) {
 	cursor = cursor->right;	
       }
       else{
@@ -75,6 +81,7 @@ Tree findKey(Tree cursor, char *buffer){
 
 Tree updateValue(char *buffer, Tree cursor){
   if(cursor != NULL){
+    //searches for the entry it wants to update, as long as it hasn't reached the end of the tree
     printf("Enter new value: ");
     readline(buffer, 128, stdin);
     free(cursor->value);
@@ -89,9 +96,12 @@ Tree updateValue(char *buffer, Tree cursor){
  }
 }
 
-Tree insertEntry(char *buffer, Tree list, Tree cursor, FILE *database){  
+Tree insertEntry(char *buffer, Tree list, FILE *database){  
+  Tree cursor = list;
   cursor = findKey(list, buffer);
+  //if findKey doesn't find a key matching the one we want to insert, it will return NULL 
   if(cursor == NULL){
+    //if cursor is NULL the key is unique and we can make a new entry
     char valbuf[128];
     puts("Key is unique!\n");
     printf("Enter value: ");
@@ -109,29 +119,52 @@ Tree insertEntry(char *buffer, Tree list, Tree cursor, FILE *database){
 }
 
 Tree minValue(Tree cursor){
-  while(cursor->right != NULL){
-      cursor = cursor->right;
-  }
+    while(cursor->left != NULL){
+      cursor = cursor->left;
+    }  
   return cursor;
 }
 
 Tree delete(char *buffer, Tree cursor){
   Tree temp = NULL;
   if(cursor != NULL){
-    if(strcmp(cursor->key, buffer) == 0){
+    if(strcmp(cursor->key, buffer) == 0) {
       if(cursor->right == NULL){
 	if(cursor->left == NULL){
 	  cursor = NULL;
 	  return cursor;
 	}
 	else{
-	  cursor = cursor->left;
-	  return cursor;
+	  strcpy(cursor->key, cursor->left->key);
+	  strcpy(cursor->value, cursor->left->value);
+	  cursor = delete(cursor->key, cursor->left);
 	}
       }
       else if(cursor->left == NULL){
-	cursor = cursor->right;
-	return cursor;
+	strcpy(cursor->key, cursor->right->key);
+	strcpy(cursor->value, cursor->right->value);
+	cursor = delete(cursor->key, cursor->right);
+      }
+      else{
+	temp = minValue(cursor->right);
+	strcpy(cursor->key, temp->key);
+	strcpy(cursor->value, temp->value);
+	cursor = delete(temp->key, cursor->right);
+      }
+    }
+    else if(strcmp(buffer, cursor->key) <= 0)
+      cursor->right = delete(buffer, cursor->right);
+    else
+      cursor->left = delete(buffer, cursor->left);
+      /*  if(cursor->right == NULL){
+	strcpy(cursor->key, cursor->left->key);
+	strcpy(cursor->value, cursor->left->value);
+	cursor->left = delete(cursor->key, cursor->left);
+      }
+      else if(cursor->left == NULL){
+	  strcpy(cursor->key, cursor->right->key);
+	  strcpy(cursor->value, cursor->right->value);
+	  cursor->right = delete(cursor->key, cursor->right);
       }
       else{
 	temp = minValue(cursor->right);
@@ -140,29 +173,47 @@ Tree delete(char *buffer, Tree cursor){
 	cursor->right = delete(cursor->key, cursor->right);
       }
     }
-    else{
-      if(strcmp(cursor->right->key, buffer) <= 0){
-	cursor->right = delete(buffer, cursor->right);
+    while(cursor != NULL){
+      if(strcmp(cursor->key, buffer) <= 0){
+	if(strcmp(cursor->right->key, buffer) == 0){
+	  temp = minValue(cursor->right->right);
+	  strcpy(cursor->right->key, temp->key);
+	  strcpy(cursor->right->value, temp->value);
+	  return cursor;
+	  break;
+	}
+	else{
+	  cursor->right = delete(buffer, cursor->right);
+	}
       }
-      else{
-	cursor->left = delete(buffer, cursor->left);
+      else if(strcmp(cursor->key, buffer) >= 0){
+	if(strcmp(cursor->left->key, buffer) == 0){
+	  temp = minValue(cursor->left->right);
+	  cursor->left = temp;
+	  return cursor;
+	  break;
+	}
+	else{
+	  cursor->left = delete(buffer, cursor->left);
+	}
       }
-    }
+      }*/
   }
+  else
+    return NULL;
   return cursor;
 }
+  
 
 Tree deleteEntry(char *buffer, Tree *list){
   Tree cursor = *list;
-  cursor = findKey(cursor, buffer);
-  if(cursor == NULL){
+  cursor = delete(buffer, cursor);
+  if(cursor == NULL){ //if it does not exists
     printf("Could not find an entry matching key \"%s\"!\n", buffer);
     return *list;
-  } 
-  else{
-    cursor = delete(buffer, cursor);
-    return cursor;
   }
+  puts("Entry was deleted sucsessfully");
+  return cursor;
 }   
 
 void printDB(Tree cursor){
@@ -171,11 +222,11 @@ void printDB(Tree cursor){
     puts(cursor->value);
   }
   if(cursor->left != NULL) {
-    puts("smaller, left");
+
     printDB(cursor->left);
   }
   if(cursor->right != NULL){
-    puts("bigger, right");
+
     printDB(cursor->right);
   }
 }
