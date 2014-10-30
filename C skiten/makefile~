@@ -1,0 +1,23 @@
+CC = gcc
+
+FLAGS = -Wall -ggdb -g -std=c99
+
+all: db
+
+db: ny2.o treefunctions.o dbfunctions.o
+	$(CC) $(FLAGS) -o db ny2.o treefunctions.o dbfunctions
+
+ny2.o: ny2.c treefunctions.h dbfunctions.h
+	$(CC) $(FLAGS) -c ny2.c
+
+dbfunctions.o: dbfunctions.c dbfunctions.h treefunctions.h
+	$(CC) $(FLAGS) -c dbfunctions.c
+
+treefunctions.o: treefunctions.c treefunctions.h
+	$(CC) $(FLAGS) -c treefunctions.c
+
+main: ny2.c
+	$(CC) $(FLAGS) -o main ny2.c
+
+run: all
+	./db ../SWE.d

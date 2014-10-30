@@ -118,6 +118,17 @@ Tree insertEntry(char *buffer, Tree list, FILE *database){
   return list;
 }
 
+Tree maxValue(Tree cursor){
+  Tree temp = NULL;
+    while(cursor->right != NULL){
+      temp = cursor;
+      cursor = cursor->right;
+    }  
+    if(temp != NULL)
+      temp->right = cursor->left;
+  return cursor;
+}
+
 Tree minValue(Tree cursor){
   Tree temp = NULL;
     while(cursor->left != NULL){
@@ -131,27 +142,29 @@ Tree minValue(Tree cursor){
 
 Tree delete(char *buffer, Tree cursor){
   Tree temp = NULL;
-  if(cursor != NULL){
+  if(cursor != NULL) {
     if(strcmp(cursor->key, buffer) == 0) {
       if(cursor->right == NULL){
 	if(cursor->left == NULL){
 	  cursor = NULL;
-	  free(cursor);
 	  return NULL;
 	}
 	else{
 	  if(cursor->left->left == NULL) {
-	    strcpy(cursor->key, cursor->left->key);
-	    strcpy(cursor->value, cursor->left->value);
-	    cursor->left = NULL;
-	    free(cursor->left);
+	    temp = cursor->left;
+	    strcpy(cursor->key, temp->key);
+	    strcpy(cursor->value, temp->value);
+	    cursor->left = temp->right;
+	    free(temp);
 	    return cursor;
 	  }		
 	  else{	   
-	    temp = minValue(cursor->left);
-	    
-	      
-	      }
+	    temp = maxValue(cursor->left);
+	    strcpy(cursor->key, temp->key);
+	    strcpy(cursor->value, temp->value);
+	    free(temp);
+	    return cursor;
+	  }
 	}
       }
       else if(cursor->left == NULL){
@@ -186,59 +199,24 @@ Tree delete(char *buffer, Tree cursor){
 	  cursor->right = temp->right;
 	  free(temp);
 	  return cursor;
+	}
       }
     }
-    else if(strcmp(buffer, cursor->key) <= 0)
-      cursor->right = delete(buffer, cursor->right);
-    else
-      cursor->left = delete(buffer, cursor->left);
-      /*  if(cursor->right == NULL){
-	strcpy(cursor->key, cursor->left->key);
-	strcpy(cursor->value, cursor->left->value);
-	cursor->left = delete(cursor->key, cursor->left);
-      }
-      else if(cursor->left == NULL){
-	  strcpy(cursor->key, cursor->right->key);
-	  strcpy(cursor->value, cursor->right->value);
-	  cursor->right = delete(cursor->key, cursor->right);
-      }
-      else{
-	temp = minValue(cursor->right);
-	strcpy(cursor->key, temp->key);
-	strcpy(cursor->value, temp->value);
-	cursor->right = delete(cursor->key, cursor->right);
-      }
+    else if((strcmp(buffer, cursor->key)) <= 0){
+      cursor->right = delete(buffer, cursor->left);
     }
-    while(cursor != NULL){
-      if(strcmp(cursor->key, buffer) <= 0){
-	if(strcmp(cursor->right->key, buffer) == 0){
-	  temp = minValue(cursor->right->right);
-	  strcpy(cursor->right->key, temp->key);
-	  strcpy(cursor->right->value, temp->value);
-	  return cursor;
-	  break;
-	}
-	else{
-	  cursor->right = delete(buffer, cursor->right);
-	}
-      }
-      else if(strcmp(cursor->key, buffer) >= 0){
-	if(strcmp(cursor->left->key, buffer) == 0){
-	  temp = minValue(cursor->left->right);
-	  cursor->left = temp;
-	  return cursor;
-	  break;
-	}
-	else{
-	  cursor->left = delete(buffer, cursor->left);
-	}
-      }
-      }*/
+    else{
+      cursor->left = delete(buffer, cursor->right);
+    }
   }
-  else
+  
+  else{
     return NULL;
+  }
+  
   return cursor;
 }
+
   
 
 Tree deleteEntry(char *buffer, Tree *list){
@@ -266,6 +244,9 @@ void printDB(Tree cursor){
     printDB(cursor->right);
   }
 }
+
+
+
 
 
 
