@@ -1,7 +1,7 @@
 public class Light {
     private int period;
     private int time;  // Intern klocka: 0, 1, ... period-1, 0, 1 ...
-    private int green; // Signalen grön när time<green 
+    private int green; // Signalen groon naer time<green 
 
     public Light(int period, int green) {
 	this.period = period;
@@ -9,20 +9,26 @@ public class Light {
     }
 
     public void    step() { 
-	while(this.time < this.period)
+	if(this.time < this.period)
 	    this.time++;
+	else
+	    this.time = 0;
        // Stegar fram klocka ett steg
     }
 
     public boolean isGreen()   {
-	if(this.time<this.green)
+	if((this.time < this.green) == true)
 	    return true;
 	return false;
+
 	// Returnerar true om time<green, annars false
     }
 
-    public String  toString()  {
-	return "Light (Period: period="+this.period+", Time; time="+this.time+", Green: green="+this.green+")";
+    public String toString()  {
+	if(this.isGreen()){
+	    return "[•]";
+	}
+	return "[o]";
     }
 	
 }
