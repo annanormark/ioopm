@@ -14,6 +14,10 @@ public class TrafficSystem {
     Scanner ob = new Scanner(System.in);
     int chance; 
     Random rand = new Random();
+    private int left = 0;
+    private int forward = 0;
+    private int carsin = 0;
+    private int carsout = 0;
     // Diverse attribut foor simuleringsparametrar (ankomstintensiteter,
     // destinationer...)
 
@@ -50,27 +54,36 @@ public class TrafficSystem {
     public void step() {
 	int i = rand.nextInt(chance);
 	if(s1.isGreen()){
-	    r1.getFirst();
+	    if(r1.firstCar() != null){
+		r1.getFirst();
+		this.carsout++;
+	    }
 	}
 	r1.step();
 	if(s2.isGreen()){
-	    r2.getFirst();
+	    if(r2.firstCar() != null){
+		r2.getFirst();
+		this.carsout++;
+	    }
 	}
 	r2.step();
 	if(r0.firstCar() != null){
 	    if((r0.firstCar().getDest() == 2) && r2.lastFree()){
 		r2.putLast(r0.firstCar());
 		r0.getFirst();
+		this.left++;
 	    }
 	    else if((r0.firstCar().getDest() == 1) && r1.lastFree()){
 		r1.putLast(r0.firstCar());
 		r0.getFirst();
+		this.forward++;
 	    }
 	}
 	r0.step();
 	if(i == 0){
 	    Car c = new Car(this.time, (rand.nextInt(2) + 1));
 	    r0.putLast(c);
+	    this.carsin++;
 	}
 	s1.step();
 	s2.step();
@@ -88,6 +101,26 @@ public class TrafficSystem {
 	System.out.println("" +s1.toString()+"\t" +r1.toString()+ "" +r0.toString()+ "\n" +s2.toString()+ "\t" +r2.toString()+"/\n\n");
 	// Skriv ut en grafisk representation av koosituationen
 	// med hjaelp av klassernas toString-metoder
+    }
+
+    public int getcarsin(){
+	return this.carsin;
+    }
+
+    public int getcarsout(){
+	return this.carsout;
+    }
+
+    public int getleft(){
+	return this.left;
+    }
+
+    public int getforward(){
+	return this.forward;
+    }
+
+    public void printstat(){
+	System.out.print("Number of cars in:" +getcarsin()+ "\nNumber of cars going left:" +getleft()+ "\nNumber of cars driving forward:" +getforward()+ "\nNumber of cars out:" +getcarsout()+ "\n");
     }
 
 }

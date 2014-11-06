@@ -21,13 +21,7 @@ public class Car {
    
 
     public String toString() {
-	int i = ran.nextInt(3);
-	if(i == 0)
-	    return "(8]≈";
-	else if(i == 1)
-	    return "(|]≈";
-	else
-	    return "(|]≈";
+	    return "(O]~";
 
 	//return "Car (Borntime: bornTime="+getBornTime()+", Destination: dest="+getDest()+")";
     }
