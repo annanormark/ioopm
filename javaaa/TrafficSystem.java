@@ -24,7 +24,8 @@ public class TrafficSystem {
     // Diverse attribut foor statistiksamling
     
     private int time = 0;
-
+    /** Prints out the choices for the user and takes in the users input on the right traffic components
+     */
     public TrafficSystem() {
 	System.out.println("The length of in-lane:");
 	this.r0 = new Lane(ob.nextInt());
@@ -42,15 +43,8 @@ public class TrafficSystem {
 	this.chance = ob.nextInt();
     }
 
-    //  public readParameters() {
-	// Laeser in parametrar foor simuleringen
-	// Metoden kan laesa fraan terminalfoonster, dialogrutor
-	// eller fraan en parameterfil. Det sista alternativet
-	// aer att fooredra vid uttestning av programmet eftersom
-	// man inte daa behoover mata in vaerdena vid varje koorning.
-        // Standardklassen Properties aer anvaendbar foor detta. 
-    //}
-
+    /** steps the car forward in the array(road) aswell as the lights and the time. It also makes new cars to put in on the array(road) and takes out the old ones at the light. It does everything.
+     */
     public void step() {
 	int i = rand.nextInt(chance);
 	if(s1.isGreen()){
@@ -96,7 +90,8 @@ public class TrafficSystem {
 	//   public void printStatistics() {
 	// Skriv statistiken samlad saa haer laangt
 	//    }
-
+    /**Prints out the simulation of the traffic system which includes lights and road
+     */
     public void print() {
 	System.out.println("" +s1.toString()+"\t" +r1.toString()+ "" +r0.toString()+ "\n" +s2.toString()+ "\t" +r2.toString()+"/\n\n");
 	// Skriv ut en grafisk representation av koosituationen
@@ -118,6 +113,9 @@ public class TrafficSystem {
     public int getforward(){
 	return this.forward;
     }
+
+    /** Prints the statics of the traffic system 
+     */
 
     public void printstat(){
 	System.out.print("Number of cars in:" +getcarsin()+ "\nNumber of cars going left:" +getleft()+ "\nNumber of cars driving forward:" +getforward()+ "\nNumber of cars out:" +getcarsout()+ "\n");
