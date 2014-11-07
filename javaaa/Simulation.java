@@ -1,9 +1,11 @@
 import java.util.*;
 public class Simulation {
 
-
+    /**
+       Make the trafficsystem and simulation.
+     */
     public static void main(String [] args) {
-    Scanner ob = new Scanner(System.in);
+	Scanner ob = new Scanner(System.in);
 	System.out.println("Length of simulation");
 	int n = ob.nextInt();
 	TrafficSystem T = new TrafficSystem();
