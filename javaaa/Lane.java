@@ -14,7 +14,7 @@ public class Lane {
 	// Konstruerar ett Lane-objekt med plats för n fordon
     }
     /**
-      Makes the car move on the lane.
+       Step the cars on the lane.
      */
     public void step() {
 	for(int i = 0; i < (theLane.length - 1); i++){
@@ -23,12 +23,12 @@ public class Lane {
 		theLane[i+1] = null;
 	    }
 	}
-	// Stega fram alla fordon (utom det paa plats 0) ett steg y
+	// Stega fram alla fordon (utom det paa plats 0) ett steg 
         // (om det gaar). (Fordonet paa plats 0 tas bort utifraan 
 	// mm h a metoden nedan.)
     }
     /**
-       Makes the car in the first place in the lane move away from the lane.
+       Removes and return the car in the first place in the lane.
      */
     public Car getFirst() {
 	Car temp = theLane[0];
@@ -37,7 +37,7 @@ public class Lane {
 	// Returnera och tag bort bilen som staar först
     }
     /**
-       Shows which car is in the fist place of the lane.
+       Return the car in the first place in the lane.
      */
     public Car firstCar() {
 	return theLane[0];
@@ -66,9 +66,7 @@ public class Lane {
 	// Staell en bil paa sista platsen paa vaegen
 	// (om det gaar).
     }
-    /**
-       Show how the lane looks.
-     */
+
     public String toString() {
 	int n = 0;
 	String temp = "";

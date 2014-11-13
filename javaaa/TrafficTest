@@ -1,0 +1,22 @@
+import static org.junit.Assert.assertEquals;
+import ~/Documents/ioopm kod/javaaa/TrafficSystem;
+
+import org.junit.Test;
+import org.junit.Ignore;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
+
+/**
+ * Tests for {@link Foo}.
+ *
+ * @author user@example.com (John Doe)
+ */
+public class TrafficTest {
+    TrafficSystem test = new TrafficSystem(10,2,2,2,2,1);
+
+    @Test
+    public void step() {
+	test.step;
+	assertEquals(test.getcarsin(), 10);
+    }
+}

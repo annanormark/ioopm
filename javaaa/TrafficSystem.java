@@ -1,3 +1,4 @@
+package TS;
 import java.util.Scanner;
 import java.util.Random;
 public class TrafficSystem {
@@ -18,6 +19,8 @@ public class TrafficSystem {
     private int forward = 0;
     private int carsin = 0;
     private int carsout = 0;
+    private int total = 0;
+    private int maxtime = 0;
     // Diverse attribut foor simuleringsparametrar (ankomstintensiteter,
     // destinationer...)
 
@@ -49,15 +52,23 @@ public class TrafficSystem {
 	int i = rand.nextInt(chance);
 	if(s1.isGreen()){
 	    if(r1.firstCar() != null){
-		r1.getFirst();
-		this.carsout++;
+	    	if((this.time - r1.firstCar().getBornTime()) > this.maxtime){
+	    		this.maxtime = (this.time - r1.firstCar().getBornTime());
+	    	}
+	    this.total = (this.total + (this.time - r1.firstCar().getBornTime())); 
+	    r1.getFirst();
+	    this.carsout++;
 	    }
 	}
 	r1.step();
 	if(s2.isGreen()){
-	    if(r2.firstCar() != null){
-		r2.getFirst();
-		this.carsout++;
+		if(r2.firstCar() != null){
+		   if((this.time - r2.firstCar().getBornTime()) > this.maxtime){
+		    this.maxtime = (this.time - r2.firstCar().getBornTime());
+		  }
+		 this.total = (this.total + (this.time - r2.firstCar().getBornTime())); 
+		 r2.getFirst();
+		 this.carsout++;
 	    }
 	}
 	r2.step();
@@ -113,12 +124,21 @@ public class TrafficSystem {
     public int getforward(){
 	return this.forward;
     }
+    
+    public int getTotal(){
+    	this.total = (this.total / this.carsout);
+    	return this.total;
+    }
+    
+    public int getMax(){
+    	return this.maxtime;
+    }
 
     /** Prints the statics of the traffic system 
      */
 
     public void printstat(){
-	System.out.print("Number of cars in:" +getcarsin()+ "\nNumber of cars going left:" +getleft()+ "\nNumber of cars driving forward:" +getforward()+ "\nNumber of cars out:" +getcarsout()+ "\n");
+	System.out.print("Number of cars in:" +getcarsin()+ "\nNumber of cars going left:" +getleft()+ "\nNumber of cars driving forward:" +getforward()+ "\nNumber of cars out:" +getcarsout()+ "\n The average time it took for a car to go thru the system:" +getTotal()+ "\n The maximum time it took for a car to go thru the system:" +getMax());
     }
 
 }
