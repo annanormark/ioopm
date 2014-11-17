@@ -140,88 +140,79 @@ Tree minValue(Tree cursor){
   return cursor;
 }
 
-Tree delete(char *buffer, Tree cursor){
+void delete(char *buffer, Tree cursor){
   Tree temp = NULL;
   if(cursor != NULL) {
     if(strcmp(cursor->key, buffer) == 0) {
       if(cursor->right == NULL){
 	if(cursor->left == NULL){
-	  cursor = NULL;
-	  return NULL;
-	}
-	else{
-	  if(cursor->left->left == NULL) {
-	    temp = cursor->left;
-	    strcpy(cursor->key, temp->key);
-	    strcpy(cursor->value, temp->value);
-	    cursor->left = temp->right;
-	    free(temp);
-	    return cursor;
-	  }		
-	  else{	   
-	    temp = maxValue(cursor->left);
-	    strcpy(cursor->key, temp->key);
-	    strcpy(cursor->value, temp->value);
-	    free(temp);
-	    return cursor;
-	  }
+	  free(cursor->value);
+	  free(cursor->key);
+	  free(cursor);
+	  // return NULL;
+	}		
+	else{	   
+	  temp = maxValue(cursor->left);
+	  strcpy(cursor->key, temp->key);
+	  cursor->value = malloc(strlen(temp->value) + 1);
+	  strcpy(cursor->value, temp->value);
+	  free(temp->value);
+	  free(temp->key);
+	  // return cursor;
 	}
       }
       else if(cursor->left == NULL){
-	if(cursor->right->left == NULL){
-	  temp = cursor->right;
-	  strcpy(cursor->key, temp->key);
-	  strcpy(cursor->value, temp->value);	  
-	  cursor->right = temp->right;
-	  free(temp);
-	  return cursor;
-	}
-	else{
 	  temp = minValue(cursor->right);
+	  cursor->key = malloc(strlen(temp->key) + 1);
 	  strcpy(cursor->key, temp->key);
+	  cursor->value = malloc(strlen(temp->value) + 1);
 	  strcpy(cursor->value, temp->value);
-	  free(temp);
-	  return cursor;
+	  free(temp->value);
+	  free(temp->key);
+	  // return cursor;
 	}
-      }
       else{
 	if(cursor->right->left != NULL){
 	  temp = minValue(cursor->right);
 	  strcpy(cursor->key, temp->key);
+	  cursor->value = malloc(strlen(temp->value) + 1);
 	  strcpy(cursor->value, temp->value);
-	  free(temp);
-	  return cursor;
+	  free(temp->value);
+	  free(temp->key);
+	  // return cursor;
 	}
 	else{
 	  temp = cursor->right;
 	  strcpy(cursor->key, temp->key);
+	  cursor->value = malloc(strlen(temp->value) + 1);
 	  strcpy(cursor->value, temp->value);	  
 	  cursor->right = temp->right;
-	  free(temp);
-	  return cursor;
+	  free(temp->value);
+	  free(temp->key);
+	  //	  return cursor;
 	}
       }
     }
     else if((strcmp(buffer, cursor->key)) <= 0){
-      cursor->right = delete(buffer, cursor->left);
+      delete(buffer, cursor->left);
     }
     else{
-      cursor->left = delete(buffer, cursor->right);
+      delete(buffer, cursor->right);
     }
   }
   
-  else{
-    return NULL;
-  }
+  //  else{
+    //  return NULL;
+  //}
   
-  return cursor;
+  //   return cursor;
 }
 
   
 
 Tree deleteEntry(char *buffer, Tree *list){
   Tree cursor = *list;
-  cursor = delete(buffer, cursor);
+  delete(buffer, cursor);
   if(cursor == NULL){ //if it does not exists
     printf("Could not find an entry matching key \"%s\"!\n", buffer);
     return *list;
