@@ -193,9 +193,37 @@ void delete(char *buffer, Tree cursor){
 	}
       }
     }
+    else if(cursor->left != NULL){
+      if(strcmp(buffer, cursor->left->key) == 0){
+	if(cursor->left->left == NULL && cursor->left->right == NULL){
+	  free(cursor->left->value);
+	  free(cursor->left->key);
+	  cursor->left = NULL;
+	}
+	else{
+	  delete(buffer, cursor->left);
+	}
+      }
+    }
+
+    else if(cursor->right != NULL){
+      if(strcmp(buffer, cursor->right->key) == 0){
+	if(cursor->right->left == NULL){
+	  if(cursor->right->right == NULL){
+	    free(cursor->right->value);
+	    free(cursor->right->key);
+	    cursor->right = NULL;
+	  }
+	}
+	else {
+	  delete(buffer, cursor->right);
+	}
+      }
+    }
     else if((strcmp(buffer, cursor->key)) <= 0){
       delete(buffer, cursor->left);
     }
+
     else{
       delete(buffer, cursor->right);
     }
