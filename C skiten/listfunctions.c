@@ -32,7 +32,7 @@ Node makeDB(char *buffer, FILE *database, Node list){
 
 void printEntry(const char *n, Node cursor){
   puts(n);
-  printf("ke: %s\nvalue: %s\n", cursor->key, cursor->value);
+  printf("key: %s\nvalue: %s\n", cursor->key, cursor->value);
 }
 
 Node findKey(Node cursor, char *buffer){
