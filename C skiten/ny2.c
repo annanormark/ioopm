@@ -54,6 +54,7 @@ int main(int argc, char *argv[]){
     case 0:
       // Exit
       puts("Good bye!");
+      FreeTree(list);
       break;
     default:
       // Please try again
@@ -61,7 +62,7 @@ int main(int argc, char *argv[]){
     }
     puts(""); 
   } 
-  free(list);
+  
   return 0;
 }
 

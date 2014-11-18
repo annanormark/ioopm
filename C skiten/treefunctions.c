@@ -40,7 +40,6 @@ Tree makeTree(char *keybuf, char *valuebuf, Tree newNode){
     newNode->left = makeTree(keybuf, valuebuf, newNode->left);
   }
   return newNode;
-
 }
 
 Tree makeDB(FILE *database, Tree list){
@@ -220,10 +219,8 @@ void delete(char *buffer, Tree cursor){
       
     }
   }
+  cursor = NULL;
 }
-
-
-  
 
 Tree deleteEntry(char *buffer, Tree *list){
   Tree cursor = *list;
@@ -242,13 +239,43 @@ void printDB(Tree cursor){
     puts(cursor->value);
   }
   if(cursor->left != NULL) {
-
     printDB(cursor->left);
   }
   if(cursor->right != NULL){
-
     printDB(cursor->right);
   }
+}
+
+void Fmax(Tree cursor){
+  Tree temp = NULL;
+    while(cursor->right != NULL){
+      temp = cursor;
+      cursor = cursor->right;
+    }
+    while(cursor->left != NULL){
+      temp = cursor;
+      cursor = cursor->left;
+    }
+    if(cursor->right != NULL){
+      Fmax(cursor);
+    }
+    if(temp->right->key == cursor->key){
+      free(cursor->value);
+      free(cursor->key);
+      free(temp->right);
+    }
+    free(cursor->value);
+    free(cursor->key);
+    free(temp->left);
+}
+
+void FreeTree(Tree list){
+  while(list->left != NULL && list->right != NULL){
+    Fmax(list);
+  }
+  free(list->value);
+  free(list->key);
+  free(list);
 }
 
 

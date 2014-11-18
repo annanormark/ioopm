@@ -23,3 +23,6 @@ Tree deleteEntry(char *key, Tree *tree);
 
 //prints the entrys in tree
 void printDB(Tree tree);
+
+//free everything in tree
+void FreeTree(Tree tree);
