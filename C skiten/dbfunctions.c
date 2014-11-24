@@ -5,11 +5,7 @@
 
 
 
-void readInput(const char *n,char *buffer){
-  printf("Enter key: ");
-  readline(buffer, 128, stdin);
-  puts(n);
-}
+
   
 void printWelcome(void){
   puts("Welcome to");

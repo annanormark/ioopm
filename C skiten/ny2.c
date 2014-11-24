@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include "dbfunctions.h"
 #include "treefunctions.h"
+#include <stdlib.h>
+#include <string.h>
 
 int main(int argc, char *argv[]){
   if (argc < 2){
@@ -17,6 +19,7 @@ int main(int argc, char *argv[]){
   while(!(feof(database))){
     list = makeDB(database, list);
   }
+  fclose(database);
   int choice = -1;
   while(choice != 0) {
     makeChoice(choice);
