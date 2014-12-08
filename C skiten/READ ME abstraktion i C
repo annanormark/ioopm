@@ -1,0 +1,27 @@
+READ ME abstraktion i C
+
+För att bygga och köra programmet från terminalen måste du för det första gå till mappen abstraktion där du finner alla filer du behöver. Där efter skriver du "make", som innehåller allt du behlver för att bygga programmet. Därefter kör du programmet genom att skriva ./db och även en databasfil som du vill använda. Se till att databasfilen du vill använda innehåller komponenter med värden. 
+
+Du kommer nu få upp 6 olika alternativ
+	1. Query a key : Skriver ut den komponent du efterfrågat.
+	2. Update an entry : Där du kan uppdatera värdet på en komponent i databasen.
+	3. New entry : Då kan du lägga till en ny komponent i databasen.
+ 	4. Remove entry : Tar bort en komponent i databasen.
+    5. Print database : Vilket skriver ut databasen du har laddat in.
+    0. Exit database : Avslutar programmet.
+
+
+Eventuella utökningar skulle vara att kanske få det mer grafiskt för att kunna se allt bättre. 
+
+Mål redovisat med programmet:
+
+E10	
+G15
+J26
+M37
+R50
+S52
+T53
+T54
+V56
+
