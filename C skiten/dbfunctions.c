@@ -1,3 +1,6 @@
+
+@file
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -5,7 +8,7 @@
 
 
 
-
+/** Prints Welcome to DB when you run the program with a database */
   
 void printWelcome(void){
   puts("Welcome to");
@@ -19,6 +22,8 @@ void printWelcome(void){
   puts("");
 }
 
+
+/** Includes the different options the user can choose between when you run the program */
 void makeChoice(int choice){
     puts("Please choose an operation");
     puts("1. Query a key");
@@ -30,5 +35,5 @@ void makeChoice(int choice){
     printf("? ");
 }
 
-//uhfu
+
 

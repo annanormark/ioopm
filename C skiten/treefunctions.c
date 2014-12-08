@@ -1,6 +1,10 @@
+@file
+
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
+
+/** defines the different structurs that is used in the program */
 
 typedef struct node{
   char *key;
@@ -12,6 +16,8 @@ typedef struct node{
 Tree cursor;
 Tree list = NULL;
 
+ /** reads a line from the database file */
+
 void readline(char *dest, int n, FILE *source){
   fgets(dest, n, source);
   int len = strlen(dest);
@@ -19,20 +25,22 @@ void readline(char *dest, int n, FILE *source){
     dest[len-1] = '\0';
 }
 
+/** Reads what the user prints in to the terminal */
+
 void readInput(const char *n,char *buffer){
   printf("Enter key: ");
   readline(buffer, 128, stdin);
   puts(n);
 }
 
+/** Makes the tree stucture by comparing then adding the different values as leaves to eachother */ 
+
 Tree makeTree(char *keybuf, char *valuebuf, Tree newNode){
   if(newNode == NULL){ 
     // if the pointer is empty it makes a new entry
     Tree newNode = malloc(sizeof(struct node));  
-    printf("alloc %s\n", keybuf);
     newNode->key = malloc(strlen(keybuf) + 1);
     strcpy(newNode->key, keybuf);
-    printf("alloc %s\n", valuebuf);
     newNode->value = malloc(strlen(valuebuf) + 1);
     strcpy(newNode->value, valuebuf);
     newNode->left = NULL;
@@ -51,6 +59,8 @@ Tree makeTree(char *keybuf, char *valuebuf, Tree newNode){
   
 }
 
+/** Makes the databasse and stores place in the memory for in */
+
 Tree makeDB(FILE *database, Tree list){
   //makes a database in tree-form
   char keybuf[128];
@@ -59,12 +69,17 @@ Tree makeDB(FILE *database, Tree list){
   readline(valuebuf, 128, database);
   list = makeTree(keybuf, valuebuf, list);
   return list;
+  
 }
+
+/** prints out the etry that the user asked for*/
 
 void printEntry(const char *n, Tree cursor){
   puts(n);
   printf("key: %s\nvalue: %s\n", cursor->key, cursor->value);
 }
+
+/** search for the asked for key and then calls fro the printEntry function to pront out what it found*/
 
 Tree findKey(Tree cursor, char *buffer){
   while(!(cursor == NULL)){
@@ -87,13 +102,14 @@ Tree findKey(Tree cursor, char *buffer){
   return NULL;
 }
 
+/** updates the value of the entry the user asked for */
+
 Tree updateValue(char *buffer, Tree cursor){
   if(cursor != NULL){
     //searches for the entry it wants to update, as long as it hasn't reached the end of the tree
     printf("Enter new value: ");
     readline(buffer, 128, stdin);
     free(cursor->value);
-    printf("alloc %s", buffer);
     cursor->value = malloc(strlen(buffer) + 1);
     strcpy(cursor->value, buffer);
     puts("Value inserted successfully!");
@@ -104,6 +120,8 @@ Tree updateValue(char *buffer, Tree cursor){
    return cursor;
  }
 }
+
+/** inserts a new entry in the database file */
 
 Tree insertEntry(char *buffer, Tree list, FILE *database){  
   Tree cursor = list;
@@ -127,6 +145,8 @@ Tree insertEntry(char *buffer, Tree list, FILE *database){
   return list;
 }
 
+/** finds the max value of the treestucture */
+
 Tree maxValue(Tree cursor){
   Tree temp = NULL;
     while(cursor->right != NULL){
@@ -137,6 +157,8 @@ Tree maxValue(Tree cursor){
       temp->right = cursor->left;
   return cursor;
 }
+
+/** finds the min value of the treestucture */
 
 Tree minValue(Tree cursor){
   Tree temp = NULL;
@@ -149,114 +171,88 @@ Tree minValue(Tree cursor){
   return cursor;
 }
 
+/** Help function to deleteEntry */
+
 void delete(char *buffer, Tree cursor){
   Tree temp = NULL;
   if(cursor != NULL) {
     if(strcmp(cursor->key, buffer) == 0) {
       if(cursor->right == NULL){
 	if(cursor->left == NULL){
-	  printf("freed %s\n", cursor->value);
 	  free(cursor->value);
-	  printf("freed %s\n", cursor->key);
 	  free(cursor->key);
 	  free(cursor);
 	  cursor = NULL;
-	}
-      		
+	  // return NULL;
+	}		
 	else{	   
 	  temp = maxValue(cursor->left);
-	  printf("freed %s\n", cursor->key);
 	  free(cursor->key);
-	  printf("alloc %s\n", temp->key);
 	  cursor->key = malloc(strlen(temp->key) + 1);
 	  strcpy(cursor->key, temp->key);
-	  printf("freed %s\n", cursor->key);
+
 	  free(cursor->value);
-	  printf("alloc %s\n", temp->value);
 	  cursor->value = malloc(strlen(temp->value) + 1);
 	  strcpy(cursor->value, temp->value);
-	  printf("freed %s\n", temp->value);
 	  free(temp->value);
-	  printf("freed %s\n", temp->key);
 	  free(temp->key);
 	  free(temp);
 	  temp = NULL;
 	  // return cursor;
 	}
       }
-	else if(cursor->left == NULL){
+      else if(cursor->left == NULL){
 	  temp = minValue(cursor->right);
-	  printf("freed %s\n", cursor->key);
 	  free(cursor->key);
-	  printf("alloc %s\n", temp->key);
 	  cursor->key = malloc(strlen(temp->key) + 1);
 	  strcpy(cursor->key, temp->key);
-	  printf("freed %s\n", cursor->value);
 	  free(cursor->value);
-	  printf("alloc %s\n", temp->value);
 	  cursor->value = malloc(strlen(temp->value) + 1);
 	  strcpy(cursor->value, temp->value);
-	  printf("freed %s\n", temp->value);
 	  free(temp->value);
-	  printf("freed %s\n", temp->key);
+	  free(temp->key);
+	  free(temp);
+	  temp = NULL;
+	  // return cursor;
+	}
+      else{
+	if(cursor->right->left != NULL){
+	  temp = minValue(cursor->right);
+	  free(cursor->key);
+	  cursor->key = malloc(strlen(temp->key) + 1);
+	  strcpy(cursor->key, temp->key);
+	  free(cursor->value);
+	  cursor->value = malloc(strlen(temp->value) + 1);
+	  strcpy(cursor->value, temp->value);
+	  free(temp->value);
 	  free(temp->key);
 	  free(temp);
 	  temp = NULL;
 	  // return cursor;
 	}
 	else{
-	  if(cursor->right->left != NULL){
-	    temp = minValue(cursor->right);
-	    printf("freed %s\n", cursor->key);
-	    free(cursor->key);
-	    printf("alloc %s\n", temp->key);
-	    cursor->key = malloc(strlen(temp->key) + 1);
-	    strcpy(cursor->key, temp->key);
-	    printf("freed %s\n", cursor->value);
-	    free(cursor->value);
-	    printf("alloc %s\n", temp->value);
-	    cursor->value = malloc(strlen(temp->value) + 1);
-	    strcpy(cursor->value, temp->value);
-	    printf("freed %s\n", temp->value);
-	    free(temp->value);
-	    printf("freed %s\n", temp->key);
-	    free(temp->key);
-	    free(temp);
-	    temp = NULL;
-	    // return cursor;
-	  }
-	  else{
-	    temp = cursor->right;
-	    printf("freed %s\n", cursor->value);
-	    free(cursor->value);
-	    printf("alloc %s\n", temp->value);
-	    cursor->value = malloc(strlen(temp->value) + 1);
-	    strcpy(cursor->value, temp->value);
-	    printf("freed %s\n", cursor->key);
-	    free(cursor->key);
-	    printf("alloc %s\n", temp->key);
-	    cursor->key = malloc(strlen(temp->key) + 1);
-	    strcpy(cursor->key, temp->key);	  
-	    cursor->right = temp->right;
-	    printf("freed %s\n", temp->value);
-	    free(temp->value);
-	    printf("freed %s\n", temp->key);
-	    free(temp->key);
-	    free(temp);
-	    temp = NULL;
-	    //	  return cursor;
-	  }
+	  temp = cursor->right;
+	  free(cursor->value);
+	  cursor->value = malloc(strlen(temp->value) + 1);
+	  strcpy(cursor->value, temp->value);
+	  free(cursor->key);
+	  cursor->key = malloc(strlen(temp->key) + 1);
+	  strcpy(cursor->key, temp->key);	  
+	  cursor->right = temp->right;
+	  free(temp->value);
+	  free(temp->key);
+	  free(temp);
+	  temp = NULL;
+	  //	  return cursor;
 	}
-      
+      }
     }
     else if((strcmp(buffer, cursor->key)) <= 0){
       if(cursor->left != NULL){
 	temp = cursor->left;
 	if(strcmp(buffer, cursor->left->key) == 0){
 	  if(temp->left == NULL && temp->right == NULL){
-	    printf("freed %s\n", temp->value);
 	    free(temp->value);
-	    printf("freed %s\n", temp->key);
 	    free(temp->key);
       	    free(temp);
 	    cursor->left = NULL;
@@ -271,20 +267,21 @@ void delete(char *buffer, Tree cursor){
 	temp = cursor->right;
 	if(strcmp(buffer, cursor->right->key) == 0){
 	  if(temp->left == NULL && temp->right == NULL){
-	    printf("freed %s\n", temp->value);
-	    free(temp->value);
-	    printf("freed %s\n", temp->key);
-	    free(temp->key);
-	    free(temp);
-	    cursor->right = NULL;
+	      free(temp->value);
+	      free(temp->key);
+       	      free(temp);
+	      cursor->right = NULL;
 	  }
 	}
       }
       delete(buffer, cursor->right);
+      
     }
   }
   cursor = NULL;
 }
+
+/** Deletes a asked for entry, by the user, in the database file */
 
 Tree deleteEntry(char *buffer, Tree *list){
   Tree cursor = *list;
@@ -296,6 +293,9 @@ Tree deleteEntry(char *buffer, Tree *list){
   puts("Entry was deleted sucsessfully");
   return cursor;
 }   
+
+
+/** Prints the entire database file with the keys and values of the keys */
 
 void printDB(Tree cursor){
   if(!(cursor == NULL)){
@@ -309,6 +309,8 @@ void printDB(Tree cursor){
     printDB(cursor->right);
   }
 }
+
+/*Finds the max value in the tree structure to helt the FreeTree function to free memory*/
 
 void Fmax(Tree cursor){
   Tree temp = NULL;
@@ -325,38 +327,36 @@ void Fmax(Tree cursor){
     }
     if(temp->right != NULL){
       if(temp->right->key == cursor->key){
-	printf("freed %s\n", cursor->value);
 	free(cursor->value);
-	printf("freed %s\n", cursor->key);
 	free(cursor->key);
 	free(cursor);
 	temp->right = NULL;
       }
     }
     else{
-    printf("freed %s\n", cursor->value);
     free(cursor->value);
-    printf("freed %s\n", cursor->key);
     free(cursor->key);
     free(cursor);
     temp->left = NULL;
     }
 }
 
+/** Helps to free the tree in the end so no memory is lost */
 
 void FreeTree(Tree list){
   while(list != NULL){
-    if(list->right != NULL)
+    if(list->right != NULL){
       Fmax(list);
-    else if(list->left != NULL)
+    }
+    else if(list->left != NULL){
       Fmax(list);
+    }
     else{
-      printf("freed %s\n", list->value);
       free(list->value);
-      printf("freed %s\n", list->key);
       free(list->key);
       free(list);
       list = NULL;
+      break;
     }
   }
 }

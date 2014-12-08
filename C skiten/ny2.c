@@ -1,8 +1,13 @@
+@file
+
 #include <stdio.h>
 #include "dbfunctions.h"
 #include "treefunctions.h"
 #include <stdlib.h>
 #include <string.h>
+
+
+/** Runs the whole program whith all the other files and also with the different cases that you find in dbfunctions.c file, it also then prints the following events for the different options*/
 
 int main(int argc, char *argv[]){
   if (argc < 2){
@@ -68,4 +73,5 @@ int main(int argc, char *argv[]){
   
   return 0;
 }
+
 
